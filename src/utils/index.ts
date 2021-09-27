@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 
 
-export const isFalsy = (value) => value === 0 ? false : !value
+export const isFalsy = (value: unknown) => value === 0 ? false : !value
 
-export const cleanObject = (object) => {
+export const cleanObject = (object: any) => {
     const result = { ...object }
     Object.keys(result).forEach(key => {
         const value = object[key]
@@ -15,14 +15,14 @@ export const cleanObject = (object) => {
 }
 
 
-export const useMount = (callback) => {
+export const useMount = (callback: () => void) => {
     useEffect(() => {
         callback()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 }
 
-export const useDebounce = (value, deley) => {
+export const useDebounce = <V>(value: V, deley?: number) => {
     const [debounceValue, setDebounceValue] = useState(value)
     //每次在value变化后，设置一个定时器
     useEffect(() => {

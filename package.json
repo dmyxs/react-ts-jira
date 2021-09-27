@@ -44,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "@types/qs": "^6.9.7",
     "prettier": "2.4.1"
   }
 }

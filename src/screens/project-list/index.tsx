@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SearchPanel } from './search-panel';
 import { List } from './list';
-import * as qs from 'qs'
+import qs from 'qs'
 import { cleanObject, useMount, useDebounce } from 'utils';
 
 const apiUrl = process.env.REACT_APP_API_URL
@@ -13,7 +13,7 @@ export const ProjectListScreen = () => {
         personId: ''
     })
 
-    const deboucedParam = useDebounce(param, 400)
+    const deboucedParam = useDebounce(param, 500)
     const [list, setList] = useState([])
 
     useEffect(() => {

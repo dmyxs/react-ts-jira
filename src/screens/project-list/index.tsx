@@ -3,8 +3,7 @@ import { SearchPanel } from './search-panel';
 import { List } from './list';
 import qs from 'qs'
 import { cleanObject, useMount, useDebounce } from 'utils';
-
-const apiUrl = process.env.REACT_APP_API_URL
+import { useHttp } from 'utils/http';
 
 export const ProjectListScreen = () => {
     const [users, setUsers] = useState([])
@@ -15,22 +14,16 @@ export const ProjectListScreen = () => {
 
     const deboucedParam = useDebounce(param, 500)
     const [list, setList] = useState([])
+    const client = useHttp()
 
     useEffect(() => {
-        fetch(`${apiUrl}/projects?${qs.stringify(cleanObject(deboucedParam))}`).then(async response => {
-            if (response.ok) {
-                setList(await response.json())
-            }
-        })
+        client('projects', { data: cleanObject(deboucedParam) }).then(setList)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deboucedParam])
 
 
     useMount(() => {
-        fetch(`${apiUrl}/users`).then(async response => {
-            if (response.ok) {
-                setUsers(await response.json())
-            }
-        })
+        client('users').then(setUsers)
     })
 
     console.log('hello');

@@ -32,3 +32,6 @@ export const useDebounce = <V>(value: V, deley?: number) => {
 
     return debounceValue
 }
+
+
+export const resetRouter = () => window.location.href = window.location.origin

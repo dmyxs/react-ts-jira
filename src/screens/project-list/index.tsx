@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { SearchPanel } from './search-panel';
 import { List } from './list';
-import qs from 'qs'
 import { cleanObject, useMount, useDebounce } from 'utils';
 import { useHttp } from 'utils/http';
+import styled from '@emotion/styled';
 
 export const ProjectListScreen = () => {
     const [users, setUsers] = useState([])
@@ -28,10 +28,13 @@ export const ProjectListScreen = () => {
 
     console.log('hello');
     return (
-        <div>
+        <Container>
             <SearchPanel users={users} param={param} setParam={setParam} />
             <List list={list} users={users} />
-        </div>
+        </Container>
     );
 }
 
+const Container = styled.div`
+    padding: 3.2rem;
+`

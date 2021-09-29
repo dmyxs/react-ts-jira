@@ -1,36 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { SearchPanel } from './search-panel';
-import { List } from './list';
+import { List, Project } from './list';
 import { cleanObject, useMount, useDebounce } from 'utils';
 import { useHttp } from 'utils/http';
 import styled from '@emotion/styled';
+import { useAsync } from 'hooks/use-async';
+import { Typography } from 'antd'
+import { useProject } from 'hooks/use-project';
+import { useUsers } from 'hooks/use-users';
 
 export const ProjectListScreen = () => {
-    const [users, setUsers] = useState([])
+
     const [param, setParam] = useState({
         name: '',
         personId: ''
     })
 
+    // project方案1:
+    // const deboucedParam = useDebounce(param, 500)
+    // const client = useHttp()
+    // const { run, isLoading, error, data: list } = useAsync<Project[]>()
+
+    // useEffect(() => {
+    //     run(client('projects', { data: cleanObject(deboucedParam) }))
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [deboucedParam])
+
+
+    // project方案2:封装到useProject
     const deboucedParam = useDebounce(param, 500)
-    const [list, setList] = useState([])
-    const client = useHttp()
-
-    useEffect(() => {
-        client('projects', { data: cleanObject(deboucedParam) }).then(setList)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [deboucedParam])
+    const { isLoading, error, data: list } = useProject(deboucedParam)
 
 
-    useMount(() => {
-        client('users').then(setUsers)
-    })
+    // users方案1:
+    // const [users, setUsers] = useState([])
+    // const client = useHttp()
+    // useMount(() => {
+    //     client('users').then(setUsers)
+    // })
+
+
+    // users方案2:采用封装
+    const { data: users } = useUsers()
+
+
 
     console.log('hello');
     return (
         <Container>
-            <SearchPanel users={users} param={param} setParam={setParam} />
-            <List list={list} users={users} />
+            <h1>项目列表</h1>
+            {error && <Typography.Text type={'danger'}>{error.message}</Typography.Text>}
+            <SearchPanel users={users || []} param={param} setParam={setParam} />
+            <List loading={isLoading} dataSource={list || []} users={users || []} />
         </Container>
     );
 }

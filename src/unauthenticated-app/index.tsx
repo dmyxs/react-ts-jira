@@ -6,10 +6,12 @@ import { Card, Button, Divider } from 'antd'
 import logo from 'assets/logo.svg'
 import left from 'assets/left.svg'
 import right from 'assets/right.svg'
+import { Typography } from "antd"
 
 
 export const UnAuthenticatedApp = () => {
     const [isResgiter, setIsRegister] = useState(false)
+    const [error, setError] = useState<Error | null>(null)
 
 
     const onChangeButton = () => {
@@ -26,7 +28,10 @@ export const UnAuthenticatedApp = () => {
                     {isResgiter ? '请注册' : '请登录'}
                 </Title>
                 {
-                    isResgiter ? <RegisterScreen /> : <LoginScreen />
+                    error ? <Typography.Text type={'danger'}>{error.message}</Typography.Text> : null
+                }
+                {
+                    isResgiter ? <RegisterScreen onError={setError} /> : <LoginScreen onError={setError} />
                 }
                 <Divider />
                 <Button

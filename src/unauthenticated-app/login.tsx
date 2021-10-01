@@ -2,13 +2,25 @@ import React, { } from 'react'
 import { useAuth } from 'context/auth-context'
 import { Form, Input } from 'antd'
 import { LongButton } from 'unauthenticated-app'
+import { useAsync } from 'hooks/use-async'
 
 
-const LoginScreen = () => {
+const LoginScreen = ({ onError }: { onError: (error: Error) => void }) => {
     const { login } = useAuth()
+    const { run, isLoading } = useAsync()
 
-    const handleLogin = (values: { username: string, password: string }) => {
-        login(values)
+    const handleLogin = async (values: { username: string, password: string }) => {
+
+        // 使用这个有点TS问题
+        // try {
+        //     await run(login(values))
+        // } catch (error) {
+        //     onError(error)
+        // }
+
+        run(login(values)).catch(e => {
+            onError(e)
+        })
     }
 
     return (
@@ -21,7 +33,7 @@ const LoginScreen = () => {
             </Form.Item>
 
             <Form.Item>
-                <LongButton htmlType={'submit'} type={'primary'}>登录</LongButton>
+                <LongButton loading={isLoading} htmlType={'submit'} type={'primary'}>登录</LongButton>
             </Form.Item>
         </Form>
     )

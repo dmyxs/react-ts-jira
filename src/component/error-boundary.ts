@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 
-type FallbackRender = (props: { error: Error | null }) => React.ReactElement
+type FallbackRender = (props: { error: Error | null }) => React.ReactElement;
 export class ErrorBoundary extends React.Component<{ children: ReactNode, fallbackRender: FallbackRender }, { error: Error | null }>{
     state = { error: null }
 

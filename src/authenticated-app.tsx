@@ -1,48 +1,69 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { useAuth } from 'context/auth-context'
-import { ProjectListScreen } from "screens/project-list"
-
 import styled from '@emotion/styled'
 import { Dropdown, Menu, Button } from 'antd'
-
+import { Row } from 'component/lib'
+// import { Route, Routes, Navigate } from 'react-router'
+// import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import { ProjectScreen } from 'screens/project'
+import { ProjectListScreen } from "screens/project-list"
 import { resetRouter } from 'utils'
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
-import { Row } from 'component/lib'
 
-export const AuthenticatedApp = () => {
-    const { logout, user } = useAuth()
+
+export const AuthenticatedApp = memo(() => {
     return (
         <Container>
-            <Header>
-                <HeaderLeft gap={true}>
-                    {/* 渲染svg的方法 */}
-                    <Button type={'link'} onClick={resetRouter}>
-                        <SoftwareLogo width={'18rem'} color={'rgb(38, 132, 255'} />
-                    </Button>
-                    <h3>项目</h3>
-                    <h3>用户</h3>
-                </HeaderLeft>
-
-                <HeaderRight>
-                    <Dropdown overlay={
-                        <Menu>
-                            <Menu.Item key={'logout'}>
-                                <Button type={'link'} onClick={logout}>登出</Button>
-                            </Menu.Item>
-                        </Menu>}>
-                        <Button type={'link'} onClick={e => e.preventDefault()}>Hi，{user?.name}</Button>
-                    </Dropdown>
-                </HeaderRight>
-            </Header>
+            <PageHeader />
             <Main>
-                <ProjectListScreen />
+                {/* router5.0 */}
+                <Router>
+                    <Switch>
+                        <Redirect exact from='/' to='/projects' />
+                        <Route path={'/projects/:projectId'} component={ProjectScreen} />
+                        <Route exact path={'/projects'} component={ProjectListScreen} />
+                    </Switch>
+                </Router>
+
+                {/* router6.0 */}
+                {/* <Router>
+                    <Routes>
+                        <Route path={'/projects'} element={<ProjectListScreen />} />
+                        <Route path={'/projects/:projectId/*'} element={<ProjectScreen />} />
+                        <Route path={'*'} element={<Navigate to={'/projects'} />} />
+                    </Routes>
+                </Router> */}
             </Main>
         </Container>
+    )
+})
 
+const PageHeader = () => {
+    const { logout, user } = useAuth()
+    return (
+        <Header>
+            <HeaderLeft gap={true}>
+                <Button type={'link'} onClick={resetRouter}>
+                    <SoftwareLogo width={'18rem'} color={'rgb(38, 132, 255'} />
+                </Button>
+                <h3>项目</h3>
+                <h3>用户</h3>
+            </HeaderLeft>
+
+            <HeaderRight>
+                <Dropdown overlay={
+                    <Menu>
+                        <Menu.Item key={'logout'}>
+                            <Button type={'link'} onClick={logout}>登出</Button>
+                        </Menu.Item>
+                    </Menu>}>
+                    <Button type={'link'} onClick={e => e.preventDefault()}>Hi，{user?.name}</Button>
+                </Dropdown>
+            </HeaderRight>
+        </Header>
     )
 }
-
-
 
 const Container = styled.div`
     display: grid;
@@ -63,3 +84,5 @@ const Header = styled.header`
 const HeaderLeft = styled(Row)``
 const HeaderRight = styled.div``
 const Main = styled.main``
+
+

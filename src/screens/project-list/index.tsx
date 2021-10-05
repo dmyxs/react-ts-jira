@@ -8,6 +8,7 @@ import { useAsync } from 'hooks/use-async';
 import { Typography } from 'antd'
 import { useProject } from 'hooks/use-project';
 import { useUsers } from 'hooks/use-users';
+import { useUrlQueryParam } from 'hooks/use-urlQueryParam';
 
 export const ProjectListScreen = () => {
 
@@ -39,11 +40,8 @@ export const ProjectListScreen = () => {
     //     client('users').then(setUsers)
     // })
 
-
     // users方案2:采用封装
     const { data: users } = useUsers()
-
-
 
     console.log('hello');
     return (
@@ -55,6 +53,8 @@ export const ProjectListScreen = () => {
         </Container>
     );
 }
+
+ProjectListScreen.whyDidYouRender = true
 
 const Container = styled.div`
     padding: 3.2rem;

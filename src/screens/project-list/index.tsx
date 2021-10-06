@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { SearchPanel } from './search-panel';
 import { List, Project } from './list';
-import { cleanObject, useMount, useDebounce } from 'utils';
+import { cleanObject } from 'utils';
+import { useDebounce, useMount, useAsync, useProject, useUsers, useUrlQueryParam } from 'hooks'
 import { useHttp } from 'utils/http';
 import styled from '@emotion/styled';
-import { useAsync } from 'hooks/use-async';
 import { Typography } from 'antd'
-import { useProject } from 'hooks/use-project';
-import { useUsers } from 'hooks/use-users';
-import { useUrlQueryParam } from 'hooks/use-urlQueryParam';
+
 
 export const ProjectListScreen = () => {
 
@@ -30,7 +28,8 @@ export const ProjectListScreen = () => {
 
     // project方案2:封装到useProject
     const deboucedParam = useDebounce(param, 500)
-    const { isLoading, error, data: list } = useProject(deboucedParam)
+    // const projectParam = { ...deboucedParam, personId: Number(deboucedParam.personId) || undefined }
+    const { isLoading, error, data: list, retry } = useProject(deboucedParam)
 
 
     // users方案1:
@@ -49,7 +48,7 @@ export const ProjectListScreen = () => {
             <h1>项目列表</h1>
             {error && <Typography.Text type={'danger'}>{error.message}</Typography.Text>}
             <SearchPanel users={users || []} param={param} setParam={setParam} />
-            <List loading={isLoading} dataSource={list || []} users={users || []} />
+            <List refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
         </Container>
     );
 }

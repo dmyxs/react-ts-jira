@@ -1,5 +1,6 @@
 // 状态处理
 import { useState } from 'react';
+import { useMountedRef } from 'hooks';
 
 interface State<D> {
     error: Error | null;
@@ -20,6 +21,10 @@ export const useAsync = <D>(initialState?: State<D>) => {
         ...defaultInitialState,
         ...initialState
     })
+    // useState惰性初始化，函数会立即执行
+    // const [retry, setRetry] = useState(() => { })
+    // 避免惰性初始化，再嵌套一层
+    const [retry, setRetry] = useState(() => () => { })
 
     const setData = (data: D) => setState({
         data,
@@ -33,21 +38,36 @@ export const useAsync = <D>(initialState?: State<D>) => {
         data: null
     })
 
+    const mountedRef = useMountedRef()
+
     // 用于触发异步请求
-    const run = async (promise: Promise<D>) => {
+    const run = async (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
         if (!promise || !promise.then) {
             throw new Error('请传入Promise类型数据')
         }
-        setState({ ...state, stat: 'loading' })
 
+        //保存状态，用于重新刷新一次
+        setRetry(() => () => {
+            if (runConfig?.retry) {
+                run(runConfig?.retry(), runConfig)
+            }
+        })
+
+
+        setState({ ...state, stat: 'loading' })
         return promise.then(data => {
-            setData(data)
+
+            // 阻止在已经卸载的组件上赋值
+            if (mountedRef.current) {
+                setData(data)
+            }
             return data
         }).catch(error => {
             setError(error)
             return Promise.reject(error)
         })
     }
+
 
     return {
         isIdle: state.stat === 'idle',
@@ -57,6 +77,7 @@ export const useAsync = <D>(initialState?: State<D>) => {
         run,
         setData,
         setError,
+        retry,
         ...state
     }
 }

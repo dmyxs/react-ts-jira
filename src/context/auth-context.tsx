@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useCallback } from 'react'
 import * as auth from 'utils/auth-provider'
 import { User } from 'screens/project-list/search-panel'
 import { http } from 'utils/http'
@@ -31,15 +31,17 @@ AuthContext.displayName = 'AuthContext'  //dev-tool使用
 
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const { data: user, error, isLoading, isIdle, isError, setData: setUser } = useAsync<User | null>()
+    const { data: user, error, isLoading, isIdle, isError, setData: setUser, run } = useAsync<User | null>()
 
     const login = (form: AuthForm) => auth.login(form).then(setUser)
     const register = (form: AuthForm) => auth.register(form).then(setUser)
     const logout = () => auth.logout().then(() => setUser(null))
 
-    useMount(() => {
-        AppInitalUser().then(setUser)
-    })
+    useMount(
+        useCallback(() => {
+            run(AppInitalUser());
+        }, [run])
+    )
 
     if (isIdle || isLoading) {
         return <FullPageLoading />

@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { SearchPanel } from './search-panel';
 import { List, Project } from './list';
 import { cleanObject } from 'utils';
-import { useDebounce, useMount, useAsync, useProject, useUsers, useUrlQueryParam } from 'hooks'
+import { useDebounce, useMount, useAsync, useProject, useUsers, useUrlQueryParam, useDocumentTitle } from 'hooks'
 import { useHttp } from 'utils/http';
 import styled from '@emotion/styled';
 import { Typography } from 'antd'
 
 
 export const ProjectListScreen = () => {
+    useDocumentTitle("项目列表", false);
 
     const [param, setParam] = useState({
         name: '',

@@ -1,5 +1,5 @@
 // 状态处理
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useMountedRef } from 'hooks';
 
 interface State<D> {
@@ -26,22 +26,22 @@ export const useAsync = <D>(initialState?: State<D>) => {
     // 避免惰性初始化，再嵌套一层
     const [retry, setRetry] = useState(() => () => { })
 
-    const setData = (data: D) => setState({
+    const setData = useCallback((data: D) => setState({
         data,
         stat: 'success',
         error: null
-    })
+    }), [])
 
-    const setError = (error: Error) => setState({
+    const setError = useCallback((error: Error) => setState({
         error,
         stat: 'error',
         data: null
-    })
+    }), [])
 
     const mountedRef = useMountedRef()
 
     // 用于触发异步请求
-    const run = async (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
+    const run = useCallback(async (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
         if (!promise || !promise.then) {
             throw new Error('请传入Promise类型数据')
         }
@@ -54,19 +54,23 @@ export const useAsync = <D>(initialState?: State<D>) => {
         })
 
 
-        setState({ ...state, stat: 'loading' })
-        return promise.then(data => {
+        // setState({ ...state, stat: 'loading' })
 
+        // 避免无限循环
+        setState(prevState => ({ ...prevState, stat: 'loading' }))
+        try {
+            const data = await promise;
             // 阻止在已经卸载的组件上赋值
             if (mountedRef.current) {
-                setData(data)
+                setData(data);
             }
-            return data
-        }).catch(error => {
-            setError(error)
-            return Promise.reject(error)
-        })
-    }
+            return data;
+        } catch (error) {
+            // setError(error);
+            return await Promise.reject(error);
+        }
+
+    }, [mountedRef, setData])
 
 
     return {

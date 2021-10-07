@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { Project } from 'screens/project-list/list';
-import { useAsync } from 'hooks/use-async';
+import { useAsync } from 'hooks';
 import { cleanObject } from 'utils';
 import { useHttp } from 'utils/http';
 

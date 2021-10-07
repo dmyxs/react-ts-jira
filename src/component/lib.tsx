@@ -1,8 +1,7 @@
 
 import React from 'react'
 import styled from "@emotion/styled";
-import { Spin } from "antd";
-import { Typography } from 'antd';
+import { Typography, Button, Spin } from 'antd';
 
 // 接收变量gap
 export const Row = styled.div<{
@@ -34,3 +33,9 @@ export const FullPageLoading = () => <FullPage>
 export const FullPageErrorFallback = ({ error }: { error: Error | null }) => <FullPage>
     <Typography.Text type={'danger'}>{error?.message}</Typography.Text>
 </FullPage>
+
+
+
+export const ButtonNoPadding = styled(Button)`
+    padding: 0;
+`

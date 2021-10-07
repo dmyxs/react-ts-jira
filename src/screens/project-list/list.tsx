@@ -5,6 +5,9 @@ import dayjs from 'dayjs'
 import { Link } from 'react-router-dom'
 import { Pin } from 'component/pin'
 import { useEditProject } from 'hooks/use-project'
+import { Dropdown } from 'antd'
+import { ButtonNoPadding } from 'component/lib'
+import { Menu } from 'antd'
 
 export interface Project {
     id: string,
@@ -20,6 +23,7 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
     users: User[];
     refresh?: () => void
+    setProjectModalOpen: (isOpen: boolean) => void;
 }
 
 export const List = ({ users, ...props }: ListProps) => {
@@ -72,6 +76,20 @@ export const List = ({ users, ...props }: ListProps) => {
                                 project.created ? dayjs(project.created).format('YYYY-MM-DD') : '无'
                             }
                         </span>
+                    }
+                },
+                {
+                    render(value, project) {
+                        return <Dropdown overlay={<Menu>
+                            <Menu.Item key={'edit'}>
+                                <ButtonNoPadding type={'link'} onClick={() => props.setProjectModalOpen(true)}>编辑</ButtonNoPadding>
+                            </Menu.Item>
+                            <Menu.Item key={'delete'}>
+                                <ButtonNoPadding type={'link'} >删除</ButtonNoPadding>
+                            </Menu.Item>
+                        </Menu>}>
+                            <ButtonNoPadding type={'link'}>...</ButtonNoPadding>
+                        </Dropdown>
                     }
                 }
             ]} {...props} />

@@ -5,10 +5,11 @@ import { cleanObject } from 'utils';
 import { useDebounce, useMount, useAsync, useProject, useUsers, useUrlQueryParam, useDocumentTitle } from 'hooks'
 import { useHttp } from 'utils/http';
 import styled from '@emotion/styled';
-import { Typography } from 'antd'
+import { Typography, Button } from 'antd'
+import { Row } from 'component/lib';
 
 
-export const ProjectListScreen = () => {
+export const ProjectListScreen = (props: { setProjectModalOpen: (isOpen: boolean) => void }) => {
     useDocumentTitle("项目列表", false);
 
     const [param, setParam] = useState({
@@ -46,10 +47,13 @@ export const ProjectListScreen = () => {
     console.log('hello');
     return (
         <Container>
-            <h1>项目列表</h1>
+            <Row between={true}>
+                <h1>项目列表</h1>
+                <Button onClick={() => props.setProjectModalOpen(true)}>创建项目</Button>
+            </Row>
             {error && <Typography.Text type={'danger'}>{error.message}</Typography.Text>}
             <SearchPanel users={users || []} param={param} setParam={setParam} />
-            <List refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
+            <List setProjectModalOpen={props.setProjectModalOpen} refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
         </Container>
     );
 }

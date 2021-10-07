@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import { useAuth } from 'context/auth-context'
 import styled from '@emotion/styled'
 import { Dropdown, Menu, Button } from 'antd'
-import { Row } from 'component/lib'
+import { ButtonNoPadding, Row } from 'component/lib'
 // import { Route, Routes, Navigate } from 'react-router'
 // import { BrowserRouter as Router } from 'react-router-dom'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
@@ -10,19 +10,24 @@ import { ProjectScreen } from 'screens/project'
 import { ProjectListScreen } from "screens/project-list"
 import { resetRouter } from 'utils'
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
+import { useState } from 'react'
+import { Projectmodal } from 'screens/project-list/project-modal'
+import { ProjectOpover } from 'component/project-popover'
 
 
 export const AuthenticatedApp = memo(() => {
+    const [projectModalOpen, setProjectModalOpen] = useState(false)
+
     return (
         <Container>
-            <PageHeader />
+            <PageHeader setProjectModalOpen={setProjectModalOpen} />
             <Main>
                 {/* router5.0 */}
                 <Router>
                     <Switch>
                         <Redirect exact from='/' to='/projects' />
                         <Route path={'/projects/:projectId'} component={ProjectScreen} />
-                        <Route exact path={'/projects'} component={ProjectListScreen} />
+                        <Route exact path={'/projects'} render={() => <ProjectListScreen setProjectModalOpen={setProjectModalOpen} />} />
                     </Switch>
                 </Router>
 
@@ -35,20 +40,21 @@ export const AuthenticatedApp = memo(() => {
                     </Routes>
                 </Router> */}
             </Main>
+            <Projectmodal projectModalOpen={projectModalOpen} onClose={() => setProjectModalOpen(false)} />
         </Container>
     )
 })
 
-const PageHeader = () => {
+const PageHeader = (props: { setProjectModalOpen: (isOpen: boolean) => void }) => {
     const { logout, user } = useAuth()
     return (
         <Header>
             <HeaderLeft gap={true}>
-                <Button type={'link'} onClick={resetRouter}>
+                <ButtonNoPadding type={'link'} onClick={resetRouter}>
                     <SoftwareLogo width={'18rem'} color={'rgb(38, 132, 255'} />
-                </Button>
-                <h3>项目</h3>
-                <h3>用户</h3>
+                </ButtonNoPadding>
+                <ProjectOpover setProjectModalOpen={props.setProjectModalOpen} />
+                <span>用户</span>
             </HeaderLeft>
 
             <HeaderRight>

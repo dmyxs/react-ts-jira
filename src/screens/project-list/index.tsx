@@ -7,10 +7,13 @@ import { useHttp } from 'utils/http';
 import styled from '@emotion/styled';
 import { Typography, Button } from 'antd'
 import { Row } from 'component/lib';
+import { useDispatch } from 'react-redux';
+import { projectListActions } from 'store/project.slice'
 
 
-export const ProjectListScreen = (props: { setProjectModalOpen: (isOpen: boolean) => void }) => {
+export const ProjectListScreen = () => {
     useDocumentTitle("项目列表", false);
+    const dispatch = useDispatch()
 
     const [param, setParam] = useState({
         name: '',
@@ -49,16 +52,16 @@ export const ProjectListScreen = (props: { setProjectModalOpen: (isOpen: boolean
         <Container>
             <Row between={true}>
                 <h1>项目列表</h1>
-                <Button onClick={() => props.setProjectModalOpen(true)}>创建项目</Button>
+                <Button onClick={() => dispatch(projectListActions.openProjectModal())}>创建项目</Button>
             </Row>
             {error && <Typography.Text type={'danger'}>{error.message}</Typography.Text>}
             <SearchPanel users={users || []} param={param} setParam={setParam} />
-            <List setProjectModalOpen={props.setProjectModalOpen} refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
+            <List refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
         </Container>
     );
 }
 
-ProjectListScreen.whyDidYouRender = true
+ProjectListScreen.whyDidYouRender = false
 
 const Container = styled.div`
     padding: 3.2rem;

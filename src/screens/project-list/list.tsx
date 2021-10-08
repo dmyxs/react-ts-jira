@@ -8,6 +8,8 @@ import { useEditProject } from 'hooks/use-project'
 import { Dropdown } from 'antd'
 import { ButtonNoPadding } from 'component/lib'
 import { Menu } from 'antd'
+import { useDispatch } from 'react-redux'
+import { projectListActions } from 'store/project.slice'
 
 export interface Project {
     id: string,
@@ -23,11 +25,11 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
     users: User[];
     refresh?: () => void
-    setProjectModalOpen: (isOpen: boolean) => void;
 }
 
 export const List = ({ users, ...props }: ListProps) => {
     const { mutate } = useEditProject()
+    const dispatch = useDispatch()
 
     // 正常
     // const pinProject = (id: number，pin: boolean) => mutate({ id, pin })
@@ -82,7 +84,7 @@ export const List = ({ users, ...props }: ListProps) => {
                     render(value, project) {
                         return <Dropdown overlay={<Menu>
                             <Menu.Item key={'edit'}>
-                                <ButtonNoPadding type={'link'} onClick={() => props.setProjectModalOpen(true)}>编辑</ButtonNoPadding>
+                                <ButtonNoPadding type={'link'} onClick={() => dispatch(projectListActions.openProjectModal())}>编辑</ButtonNoPadding>
                             </Menu.Item>
                             <Menu.Item key={'delete'}>
                                 <ButtonNoPadding type={'link'} >删除</ButtonNoPadding>

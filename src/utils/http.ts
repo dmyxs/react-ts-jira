@@ -1,4 +1,4 @@
-import { useAuth } from 'context/auth-context';
+import { useAuth } from 'context/auth-context-redux';
 import qs from 'qs'
 import { useCallback } from 'react';
 import * as auth from './auth-provider'

@@ -3,7 +3,7 @@ import './App.css';
 
 import { AuthenticatedApp } from 'authenticated-app';
 import { UnAuthenticatedApp } from './unauthenticated-app';
-import { useAuth } from 'context/auth-context';
+import { useAuth } from 'context/auth-context-redux';
 import { ErrorBoundary } from 'component/error-boundary';
 import { FullPageErrorFallback } from 'component/lib';
 

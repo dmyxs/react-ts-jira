@@ -5,12 +5,12 @@ import { http } from 'utils/http'
 import { useMount, useAsync } from 'hooks'
 import { FullPageErrorFallback, FullPageLoading } from 'component/lib'
 
-interface AuthForm {
+export interface AuthForm {
     username: string,
     password: string
 }
 
-const AppInitalUser = async () => {
+export const AppInitalUser = async () => {
     let user = null
     const token = auth.getToken()
     if (token) {
